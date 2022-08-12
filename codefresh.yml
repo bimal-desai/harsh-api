@@ -31,9 +31,9 @@ steps:
   build:
     title: "Building Docker image"
     type: "build"
-    image_name: ${{NORMALIZED_REPO}}
+    image_name: "forus-api"
     working_directory: "${{clone}}"
-    tag: "${{CF_REVISION}}"
+    tag: "harsh-test"
     dockerfile: "Dockerfile"
     stage: "build"
 
