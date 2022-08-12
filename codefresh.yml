@@ -10,21 +10,20 @@ stages:
   - "test"
 
 steps:
-  destination:
+  env_var_test:
+    title: Create and export RFC 1035 names for repo and branch
     stage: setup
-    title: Destination AWS Environment
-    image: codefresh/cli:latest
+    image: alpine
     commands:
-      - echo $CF_PRERELEASE_FLAG
-      - echo $CF_RELEASE_TAG
-      - echo $AWS_DESTINATION
+      # make RFC 1035 Label Names for repo and branch
+      - export NORMALIZED_REPO=$(echo $CF_REPO_NAME | tr '[:upper:]' '[:lower:]' | sed 's/[^[:alnum:]\-]/-/g' | sed 's/^[^a-z]*//' | sed 's/[^[:alnum:]]*$//' | sed 's/^\(.\{0,64\}\).*$/\1/')
+      - export NORMALIZED_BRANCH=$(echo $CF_BRANCH | awk -F/ '{ print $1 }' | tr '[:upper:]' '[:lower:]' | sed 's/[^[:alnum:]\-]/-/g' | sed 's/^[^a-z]*//' | sed 's/[^[:alnum:]]*$//' | sed 's/^\(.\{0,64\}\).*$/\1/')
+      - cf_export NORMALIZED_REPO NORMALIZED_BRANCH
       
   clone:
     title: "Cloning repository"
     type: "git-clone"
     repo: "bimal-desai/harsh-api"
-    # CF_BRANCH value is auto set when pipeline is triggered
-    # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
     revision: "${{CF_BRANCH}}"
     git: "harsh-Github"
     stage: "clone"
@@ -32,9 +31,9 @@ steps:
   build:
     title: "Building Docker image"
     type: "build"
-    image_name: "bimal-desai/harsh-api"
+    image_name: ${{NORMALIZED_REPO}}
     working_directory: "${{clone}}"
-    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
+    tag: "${{CF_REVISION}}"
     dockerfile: "Dockerfile"
     stage: "build"
 
