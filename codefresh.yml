@@ -24,7 +24,7 @@ steps:
     type: "build"
     image_name: "bimal-desai/harsh-api"
     working_directory: "${{clone}}"
-    tag: 'master'
+    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
     dockerfile: "Dockerfile"
     stage: "build"
 
