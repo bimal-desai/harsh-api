@@ -4,11 +4,21 @@
 version: "1.0"
 # Stages can help you organize your steps in stages
 stages:
+  - "setup"
   - "clone"
   - "build"
   - "test"
 
 steps:
+  destination:
+    stage: setup
+    title: Destination AWS Environment
+    image: codefresh/cli:latest
+    commands:
+      - echo $CF_PRERELEASE_FLAG
+      - echo $CF_RELEASE_TAG
+      - echo $AWS_DESTINATION
+      
   clone:
     title: "Cloning repository"
     type: "git-clone"
